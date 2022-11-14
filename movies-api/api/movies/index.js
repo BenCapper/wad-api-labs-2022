@@ -8,6 +8,7 @@ router.get('/', (req, res) => {
     res.json(movies);
 });
 
+
 router.get('/:id', (req, res) => {
     const id = parseInt(req.params.id);
     if (movieDetails.id == id) {
