@@ -6,17 +6,6 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-// deletes all user documents in collection and inserts test data
-async function loadUsers() {
-  console.log('load user Data');
-  try {
-    await userModel.deleteMany();
-    await userModel.collection.insertMany(users);
-    console.info(`${users.length} users were successfully stored.`);
-  } catch (err) {
-    console.error(`failed to Load user Data: ${err}`);
-  }
-}
 
 // deletes all genre documents in collection and inserts test data
 async function loadGenres() {
@@ -27,6 +16,18 @@ async function loadGenres() {
       console.info(`${genres.length} genres were successfully stored.`);
     } catch (err) {
       console.error(`failed to Load genre Data: ${err}`);
+    }
+  }
+
+// deletes all user documents in collection and inserts test data
+async function loadUsers() {
+    console.log('load user Data');
+    try {
+      await userModel.deleteMany();
+      await users.forEach(user => userModel.create(user));
+      console.info(`${users.length} users were successfully stored.`);
+    } catch (err) {
+      console.error(`failed to Load user Data: ${err}`);
     }
   }
 
