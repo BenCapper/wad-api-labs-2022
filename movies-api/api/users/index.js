@@ -6,6 +6,8 @@ import movieModel from '../movies/movieModel';
 
 const router = express.Router(); // eslint-disable-line
 
+let regex = new RegExp("^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{5,}$");
+
 // Get all users
 router.get('/', async (req, res) => {
     const users = await User.find();
@@ -17,6 +19,10 @@ router.post('/',asyncHandler( async (req, res, next) => {
     if (!req.body.username || !req.body.password) {
       res.status(401).json({success: false, msg: 'Please pass username and password.'});
       return next();
+    }
+    if (regex.test(req.body.password)) {
+        res.status(401).json({success: false, msg: 'BadPassword'});
+        return next();
     }
     if (req.query.action === 'register') {
       await User.create(req.body);
@@ -57,7 +63,8 @@ router.post('/:userName/favourites', asyncHandler(async (req, res) => {
     const userName = req.params.userName;
     const movie = await movieModel.findByMovieDBId(newFavourite);
     const user = await User.findByUserName(userName);
-    await user.favourites.push(movie._id);
+    !user.favourites.includes(movie._id) ? await user.favourites.push(movie._id) : 
+        res.status(401).json({code: 401,msg: 'Already in Favourites'})
     await user.save(); 
     res.status(201).json(user); 
   }));
