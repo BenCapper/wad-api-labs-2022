@@ -1,5 +1,7 @@
 import './db';
 import './seedData';
+import session from 'express-session';
+import authenticate from './authenticate';
 import dotenv from 'dotenv';
 import express from 'express';
 import moviesRouter from './api/movies';
@@ -22,7 +24,14 @@ const app = express();
 const port = process.env.PORT;
 
 app.use(express.json());
-app.use('/api/movies', moviesRouter);
+
+app.use(session({
+  secret: 'ilikecake',
+  resave: true,
+  saveUninitialized: true
+}));
+
+app.use('/api/movies', authenticate, moviesRouter);
 app.use('/api/genres', genresRouter);
 app.use('/api/users', usersRouter);
 
